@@ -18,7 +18,7 @@ use App\Http\Controllers\UserController;
 
 // Rotas de login:
 
-Route::get('/login', [UserController::class, 'login']);
+Route::get('/login', [UserController::class, 'login'])->name('login');
 Route::post('/signin', [UserController::class, 'signin']);
 
 // Rotas de registro:
@@ -26,11 +26,22 @@ Route::post('/signin', [UserController::class, 'signin']);
 Route::get('/register', [UserController::class, 'register']);
 Route::post('/signup', [UserController::class, 'signup']);
 
-// Rotas para Home:
+// Rota de logout:
 
-Route::get('/', [HomeController::class, 'dashboard']);
+Route::get('/logout', [UserController::class, 'logout']);
 
-// Rotas para posts:
+Route::group(['middleware' => 'auth'], function () {
+    // Rotas para Home:
+        Route::get('/', [HomeController::class, 'dashboard']);
 
-Route::get('/posts/create', [PostController::class, 'create']);
-Route::post('/posts/store', [PostController::class, 'store']);
+    // Rotas para posts:
+        Route::get('/posts/create', [PostController::class, 'create']);
+        Route::post('/posts/store', [PostController::class, 'store']);
+
+    // Rotas para edição de posts:
+        Route::get('/posts/edit/{id}', [PostController::class, 'edit']);
+        Route::post('/posts/update/{id}', [PostController::class, 'update']);
+
+    // Rotas para deletar posts:
+        Route::post('/posts/destroy/{id}', [PostController::class, 'destroy']);
+});

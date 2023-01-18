@@ -56,9 +56,17 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
-    {
-        //
+    public function edit($id)
+    {   
+        $user = auth()->user();
+
+        $post = Post::find($id);
+
+        if ($post->user_id != $user->id) {
+            abort(404);
+        }
+
+        return view('posts.edit', compact('post'));
     }
 
     /**
@@ -70,7 +78,24 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $post = Post::find($id);
+        $user = auth()->user();
+
+        // Valida se o post pertence ao usuário logado
+        if ($post->user_id != $user->id) {
+            abort(404);
+        }
+
+        // Valida se a descrição está vazia
+        if (empty($request->description)) {
+            return back();
+        }
+
+        $post->update([
+            'description' => $request->description
+        ]);
+
+        return redirect('/');
     }
 
     /**
@@ -81,6 +106,16 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post = Post::find($id);
+        $user = auth()->user();
+
+        // Valida se o post pertence ao usuário logado
+        if ($post->user_id != $user->id) {
+            abort(404);
+        }
+
+        $post->delete();
+
+        return redirect('/');
     }
 }
