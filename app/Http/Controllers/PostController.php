@@ -36,6 +36,8 @@ class PostController extends Controller
             'user_id' => $user->id,
         ]);
 
+        logger()->info('Post criado por' . $user->name);
+
         return redirect('/');
     }
 
